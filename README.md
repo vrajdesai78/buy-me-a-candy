@@ -1,32 +1,11 @@
-## Solana frontend started kit
+# Buy Me A Candy
 
-This template has everything you need to build a web3 app on Solana using the thirdweb SDK.
+Anyone can create their micro page of their profile on Buy Me A Candy. It's a simple way to share your profile with others. When user creates a new profile an NFT will be minted on the user's connected wallet. This NFT will be minted on Solana blockchain and user don't have to pay any gas fees to mint the NFT. The NFT will be minted on Buy Me A Candy NFT collection.
 
-## Getting Started
+## How to create your profile?
 
-Create a project using this example:
+Create a profile by entering your name, description, and profile picture. You can also add your social media links. After creating your profile, NFT will be minted on your connected wallet. You can view your NFT on your wallet. 
 
-```bash
-npx thirdweb create --template next-typescript-solana-starter
-```
+## How to view your profile?
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-On `pages/_app.tsx`, you'll find our `ThirdwebProvider` wrapping your app, this is necessary for our hooks to work.
-
-on `pages/index.tsx`, you'll find an example of a connect wallet button and some hooks.
-
-## Learn More
-
-To learn more about thirdweb and Next.js, take a look at the following resources:
-
-- [thirdweb React Documentation](https://docs.thirdweb.com/react) - learn about our React SDK.
-- [thirdweb TypeScript Documentation](https://docs.thirdweb.com/typescript) - learn about our JavaScript/TypeScript SDK.
-- [thirdweb Portal](https://docs.thirdweb.com) - check our guides and development resources.
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-
-You can check out [the thirdweb GitHub organization](https://github.com/thirdweb-dev) - your feedback and contributions are welcome!
-
-## Join our Discord!
-
-For any questions, suggestions, join our discord at [https://discord.gg/thirdweb](https://discord.gg/thirdweb).
+While creating your profile, you have entered username so you can access the profile by visiting `https://buymecandy.xyz/username`. For example, if your username is `john` then you can access your profile by visiting `https://buymecandy.xyz/john`. You can also access site by entering your wallet address or SNS (Solana Name Service). 
