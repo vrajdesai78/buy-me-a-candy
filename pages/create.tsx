@@ -25,6 +25,8 @@ import React, { useState } from 'react';
 import { ThirdwebSDK } from "@thirdweb-dev/sdk/solana";
 import dynamic from "next/dynamic";
 import { useWallet } from '@solana/wallet-adapter-react';
+import { Web3Storage } from 'web3.storage';
+import defaultImage from '../assets/Buy Me.png'
 
 export default function UserProfileEdit(): JSX.Element {
 
@@ -36,6 +38,7 @@ export default function UserProfileEdit(): JSX.Element {
     const [linkedinUrl, setLinkedinUrl] = useState('')
     const [twitterUrl, setTwitterUrl] = useState('')
     const [githubUrl, setGithubUrl] = useState('')
+
 
     // Default styles that can be overridden by your app
     require("@solana/wallet-adapter-react-ui/styles.css");
@@ -52,7 +55,17 @@ export default function UserProfileEdit(): JSX.Element {
         const value = e.target.value
         switch (name) {
             case 'icon':
-                setIcon(value)
+                e.preventDefault()
+                const files = (e.target as HTMLInputElement).files!;
+                if (process.env.ACCESS_TOKEN != null) {
+                    const client = new Web3Storage({ token: process.env.ACCESS_TOKEN })
+                    client.put(files).then((cid) => {
+                        setIcon(`https://${cid}.ipfs.w3s.link/${files[0].name}`)
+                    })
+                } else {
+                    console.log("No access token")
+                }
+                break
             case 'name':
                 setName(value)
                 break
@@ -81,50 +94,56 @@ export default function UserProfileEdit(): JSX.Element {
 
     const { publicKey } = useWallet();
 
-    const sdk = ThirdwebSDK.fromPrivateKey("devnet", "2my7j6TSnZZcRHCxW6ZDvgcjcEEBDShM4XLkbe6Di2bBemTUngPvnBVpKwpnG8LMCFA3DuARbz6MFM2Kpo3zZ2Hz");
 
     async function mintNFT(): Promise<any> {
-        const program = await sdk.getProgram("4mWbQ2wte2FbauiTQ3sNY681rxfNu8DZKWscrF7RJPEJ", "nft-collection");
-        const metadata = {
-            name: userName,
-            symbol: "CANDY",
-            description: "NFT used to create profile in buy me a candy",
-            properties: [
-                {
-                    name: "Name",
-                    value: name
-                },
-                {
-                    name: "Username",
-                    value: userName
-                },
-                {
-                    name: "Bio",
-                    value: bio
-                },
-                {
-                    name: "Email",
-                    value: email
-                },
-                {
-                    name: "Linkedin",
-                    value: "https://" + linkedinUrl
-                },
-                {
-                    name: "Twitter",
-                    value: "https://" + twitterUrl
-                },
-                {
-                    name: "Github",
-                    value: "https://" + githubUrl
-                }
-            ]
-        }
-        if (publicKey != null) {
-            const mintAddress = await program.mintTo(publicKey.toBase58(), metadata);
-            alert("Successfully minted NFT to your wallet. Mint address: " + mintAddress)
+
+        if (process.env.PRIVATE_KEY != null) {
+            const sdk = ThirdwebSDK.fromPrivateKey("devnet", process.env.PRIVATE_KEY);
+            const program = await sdk.getProgram("4mWbQ2wte2FbauiTQ3sNY681rxfNu8DZKWscrF7RJPEJ", "nft-collection");
+            const metadata = {
+                name: userName,
+                symbol: "CANDY",
+                Image: defaultImage,
+                description: "NFT used to create profile in buy me a candy",
+                properties: [
+                    {
+                        name: "Profile",
+                        value: icon
+                    },
+                    {
+                        name: "Name",
+                        value: name
+                    },
+                    {
+                        name: "Bio",
+                        value: bio
+                    },
+                    {
+                        name: "Email",
+                        value: email
+                    },
+                    {
+                        name: "Linkedin",
+                        value: "https://" + linkedinUrl
+                    },
+                    {
+                        name: "Twitter",
+                        value: "https://" + twitterUrl
+                    },
+                    {
+                        name: "Github",
+                        value: "https://" + githubUrl
+                    }
+                ]
+            }
+            if (publicKey != null) {
+                const mintAddress = await program.mintTo(publicKey.toBase58(), metadata);
+                alert("Successfully minted NFT to your wallet. Mint address: " + mintAddress)
+            } else {
+                return console.error("Wallet not connected");
+            }
         } else {
-            return console.error("Wallet not connected");
+            return console.error("No private key found");
         }
     }
 
@@ -175,31 +194,37 @@ export default function UserProfileEdit(): JSX.Element {
                     <Heading lineHeight={1.1} fontSize={{ base: '2xl', sm: '3xl' }}>
                         Create your page
                     </Heading>
-                    <FormControl id="userProfile" onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('icon', e)}>
-                        <FormLabel>User Icon</FormLabel>
-                        <Stack direction={['column', 'row']} spacing={6}>
-                            <Center>
-                                <Avatar size="xl" src="https://bit.ly/sage-">
-                                    <AvatarBadge
-                                        as={IconButton}
-                                        size="sm"
-                                        rounded="full"
-                                        top="-10px"
-                                        colorScheme="red"
-                                        aria-label="remove Image"
-                                        icon={<SmallCloseIcon />}
+                    <form>
+                        <FormControl id="userProfile">
+                            <FormLabel>User Icon</FormLabel>
+                            <Stack direction={['column', 'row']} spacing={6}>
+                                <Center>
+                                    <Avatar size="xl" src={icon}>
+                                        <AvatarBadge
+                                            as={IconButton}
+                                            size="sm"
+                                            rounded="full"
+                                            top="-10px"
+                                            colorScheme="red"
+                                            aria-label="remove Image"
+                                            icon={<SmallCloseIcon />}
+                                        />
+                                    </Avatar>
+                                </Center>
+                                <Center w="full">
+                                    <Input
+                                        colorScheme="blue"
+                                        variant="outline"
+                                        w="full"
+                                        type="file"
+                                        accept="image/*"
+                                        name='file'
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('icon', e)}
                                     />
-                                </Avatar>
-                            </Center>
-                            <Center w="full">
-                                <Button
-                                    colorScheme="blue"
-                                    variant="outline"
-                                    w="full"
-                                > Upload profile photo </Button>
-                            </Center>
-                        </Stack>
-                    </FormControl>
+                                </Center>
+                            </Stack>
+                        </FormControl>
+                    </form>
 
                     <FormControl id="userName" isRequired onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('userName', e)}>
                         <FormLabel>User Name</FormLabel>

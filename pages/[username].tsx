@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Flex, Icon, Image, chakra } from "@chakra-ui/react";
 import { MdEmail, MdHeadset, MdLocationOn } from "react-icons/md";
 import { BsFillBriefcaseFill } from "react-icons/bs";
@@ -7,34 +7,41 @@ import { ThirdwebSDK } from "@thirdweb-dev/sdk/solana";
 
 const User = () => {
     const router = useRouter()
-    const { userAddress } = router.query
+    const { username } = router.query
 
     const [icon, setIcon] = useState('')
     const [name, setName] = useState('')
-    const [userName, setUserName] = useState('')
     const [bio, setBio] = useState('')
     const [email, setEmail] = useState('')
     const [linkedinUrl, setLinkedinUrl] = useState('')
     const [twitterUrl, setTwitterUrl] = useState('')
     const [githubUrl, setGithubUrl] = useState('')
 
-    async function getUserDetails(userAddress: string) {
+    async function getUserDetails(username: string) {
         const sdk = ThirdwebSDK.fromPrivateKey("devnet", "2my7j6TSnZZcRHCxW6ZDvgcjcEEBDShM4XLkbe6Di2bBemTUngPvnBVpKwpnG8LMCFA3DuARbz6MFM2Kpo3zZ2Hz");
         const program = await sdk.getProgram("4mWbQ2wte2FbauiTQ3sNY681rxfNu8DZKWscrF7RJPEJ", "nft-collection");
         const nfts = await program.getAll();
-        const userNfts = nfts.find(nft => nft.owner === userAddress);
-        const userData = JSON.stringify(userNfts!.metadata.properties);
-        const parsedData = JSON.parse(userData);
-        setName(parsedData[0].value);
-        // setUserName(parsedData[1].value);
-        setBio(parsedData[1].value);
-        setEmail(parsedData[2].value);
-        setLinkedinUrl(parsedData[3].value);
-        setTwitterUrl(parsedData[4].value);
-        setGithubUrl(parsedData[5].value);
+        try {
+            const userNfts = nfts.find(nft => nft.metadata.name === username);
+            console.log(userNfts);
+            const userData = JSON.stringify(userNfts!.metadata!.properties);
+            const parsedData = JSON.parse(userData);
+            setIcon(parsedData[0].value);
+            setName(parsedData[1].value);
+            setBio(parsedData[3].value);
+            setEmail(parsedData[4].value);
+            setLinkedinUrl(parsedData[5].value);
+            setTwitterUrl(parsedData[6].value);
+            setGithubUrl(parsedData[7].value);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
-    getUserDetails(userAddress as string);
+    // call function on page load 
+    useEffect(() => {
+        getUserDetails(username as string);
+    }, [username]);
 
     return (
         <Flex
@@ -61,7 +68,7 @@ const User = () => {
                     h='md'
                     fit="cover"
                     objectPosition="center"
-                    src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80"
+                    src={icon}
                     alt="avatar"
                 />
 

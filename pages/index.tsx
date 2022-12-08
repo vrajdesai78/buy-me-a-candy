@@ -13,7 +13,6 @@ import {
   Icon,
   Flex,
   useColorModeValue,
-  VisuallyHidden,
   HStack,
 } from "@chakra-ui/react";
 
@@ -48,19 +47,10 @@ const Home: NextPage = () => {
         w="full"
         px={{ base: 2, sm: 4 }}
         py={4}
-        shadow="md"
       >
         <Flex alignItems="center" justifyContent="space-between" mx="auto">
           <Flex>
-            <chakra.a
-              href="/"
-              title="Choc Home Page"
-              display="flex"
-              alignItems="center"
-            >              <VisuallyHidden>Choc</VisuallyHidden>
-            </chakra.a>
             <chakra.h1 fontSize="xl" fontWeight="medium" ml="2">
-              Buy Me a Candy
             </chakra.h1>
           </Flex>
           <HStack display="flex" alignItems="center" spacing={1}>
