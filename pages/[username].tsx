@@ -8,7 +8,6 @@ import {
     Stack,
     Button,
     Link,
-    useColorModeValue,
     Flex,
     VStack,
     HStack,
@@ -26,6 +25,7 @@ import { IconType } from 'react-icons';
 import * as Web3 from '@solana/web3.js';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { NavBar } from '../components/NavBar';
+import { Footer } from '../components/Footer';
 
 export const getServerSideProps = async (context: any) => {
 
@@ -54,24 +54,25 @@ export const getServerSideProps = async (context: any) => {
 
 export const socialLinkComponent = (url: string, text: string, icon: IconType) => {
     return (
-        <HStack spacing={2} >
+        <HStack spacing={2}>
             <Box minW='xl' >
                 <Link href={url} isExternal
                     _hover={{
                         textDecoration: 'none',
                     }}>
                     <Button
+                        minW={'50%'}
                         flex={1}
-                        fontSize={'sm'}
+                        fontSize={'md'}
                         rounded={'full'}
                         _focus={{
                             bg: 'gray.200',
                         }}>
-                        <Icon as={icon} size={'2em'} />
+                        <Icon as={icon} size={'md'} />
                         <Text
                             fontSize={'md'}
                             textAlign={'center'}
-                            color={useColorModeValue('gray.700', 'gray.400')}
+                            color={'gray.700'}
                             px={3}>
                             {text}
                         </Text>
@@ -129,40 +130,42 @@ const User = ({ parsedData }: { parsedData: Array<{ [key: string]: string }> }) 
         const latestBlockhash = await connection.getLatestBlockhash();
         transaction.lastValidBlockHeight = latestBlockhash.lastValidBlockHeight;
         transaction.recentBlockhash = latestBlockhash.blockhash;
-        
+
         sendTransaction(transaction, connection).then((sig) => {
             setTxSig(sig)
         });
     }
 
     return (
-        <>
+        <Box bgGradient={'linear(blue.300 0%, purple.300 35%, green.100 100%)'}>
+            <style jsx global>{`
+                html, body {
+                    height: 100%;
+                    width: 100%;
+                }
+            `}</style>
             <NavBar />
             <Flex
                 py={6}
                 minW={'100vw'}
                 maxH={'100vh'}
-                p={50}
+                p={30}
                 w="full"
                 alignItems="center"
                 justifyContent="center"
             >
-                <style jsx global>{`
-            html, body {
-                height: 100%;
-                width: 100%;
-            }
-        `}</style>
+
                 <Box
                     maxW={'sm'}
                     w={'full'}
-                    bg={useColorModeValue('white', 'gray.900')}
+                    border = '1px'
+                    bgGradient={'linear(blue.300 0%, purple.300 35%, green.100 100%)'}
                     boxShadow={'2xl'}
                     rounded={'lg'}
                     p={6}
                     textAlign={'center'}>
                     <Avatar
-                        size={'xl'}
+                        size={'2xl'}
                         src={icon}
                         mb={4}
                         pos={'relative'}
@@ -170,12 +173,13 @@ const User = ({ parsedData }: { parsedData: Array<{ [key: string]: string }> }) 
                     <Heading fontSize={'2xl'} fontFamily={'body'}>
                         {name}
                     </Heading>
-                    <Text fontWeight={600} color={'gray.500'} mb={4}>
+                    <Text fontWeight={600} color={'blue.800'} mb={4}>
                         @{username}
                     </Text>
                     <Text
                         textAlign={'center'}
-                        color={useColorModeValue('gray.700', 'gray.400')}
+                        color={'black.900'}
+                        fontWeight='bold'
                         px={3}>
                         {bio}
                     </Text>
@@ -183,7 +187,7 @@ const User = ({ parsedData }: { parsedData: Array<{ [key: string]: string }> }) 
                     {/* {Show social media links of user} */}
 
                     <VStack mt={8} direction={'row'} spacing={4}>
-                        {socialLinkComponent(`mailto:${email}`, email, MdEmail)}
+                        {socialLinkComponent(`mailto:${email}`, 'Email', MdEmail)}
                         {socialLinkComponent(linkedinUrl, 'LinkedIn', FaLinkedin)}
                         {socialLinkComponent(twitterUrl, 'Twitter', FaTwitter)}
                         {socialLinkComponent(githubUrl, 'Github', FaGithub)}
@@ -194,11 +198,12 @@ const User = ({ parsedData }: { parsedData: Array<{ [key: string]: string }> }) 
                                 <NumberInputField
                                     placeholder='Enter Sol'
                                     flex={2}
+                                    bg={'gray.100'}
                                     fontSize={'sm'}
                                     rounded={'md'}
                                     id='amount'
                                     _focus={{
-                                        bg: 'gray.200',
+                                        bg: 'gray.100',
                                     }} />
                                 <NumberInputStepper>
                                     <NumberIncrementStepper />
@@ -209,17 +214,17 @@ const User = ({ parsedData }: { parsedData: Array<{ [key: string]: string }> }) 
                                 flex={1}
                                 fontSize={'sm'}
                                 rounded={'md'}
-                                bg={'blue.400'}
+                                bg={'blue.700'}
                                 color={'white'}
                                 type='submit'
                                 boxShadow={
                                     '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
                                 }
                                 _hover={{
-                                    bg: 'blue.500',
+                                    bg: 'blue.900',
                                 }}
                                 _focus={{
-                                    bg: 'blue.500',
+                                    bg: 'blue.900',
                                 }}>
                                 Send Sol
                             </Button>
@@ -227,7 +232,8 @@ const User = ({ parsedData }: { parsedData: Array<{ [key: string]: string }> }) 
                     </form>
                 </Box>
             </Flex >
-        </>
+            <Footer/>
+        </Box>
     )
 }
 

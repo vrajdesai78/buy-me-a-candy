@@ -6,7 +6,6 @@ import {
     Heading,
     Input,
     Stack,
-    useColorModeValue,
     Avatar,
     AvatarBadge,
     IconButton,
@@ -15,7 +14,8 @@ import {
     GridItem,
     InputGroup,
     InputLeftAddon,
-    Textarea
+    Textarea,
+    Box
 } from '@chakra-ui/react';
 import { SmallCloseIcon } from '@chakra-ui/icons';
 import React, { useState } from 'react';
@@ -24,6 +24,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { Web3Storage } from 'web3.storage';
 import defaultImage from '../assets/Buy Me.png'
 import { NavBar } from '../components/NavBar';
+import { Footer } from '../components/Footer';
 
 export default function UserProfileEdit(): JSX.Element {
 
@@ -88,7 +89,7 @@ export default function UserProfileEdit(): JSX.Element {
             const metadata = {
                 name: userName,
                 symbol: "CANDY",
-                Image: defaultImage,
+                Image: icon,
                 description: "NFT used to create profile in buy me a candy",
                 properties: [
                     {
@@ -133,29 +134,29 @@ export default function UserProfileEdit(): JSX.Element {
     }
 
     return (
-        <>
+        <Box bgGradient='linear(blue.300 0%, purple.300 35%, green.100 90%)'>
             <style jsx global>{`
             html, body {
                 height: 100%;
                 width: 100%;
             }
         `}</style>
-            <NavBar/>
+            <NavBar />
             <Flex
                 minH={'100vh'}
                 minW={'100vw'}
                 align={'center'}
-                justify={'center'}
-                bg={useColorModeValue('gray.50', 'gray.800')}>
+                justify={'center'}>
                 <Stack
                     spacing={4}
                     w={'full'}
                     maxW={'md'}
-                    bg={useColorModeValue('white', 'gray.700')}
                     rounded={'xl'}
                     boxShadow={'lg'}
+                    border={'1px'}
                     p={6}
-                    my={12}>
+                    my={12}
+                    bg='#dae3fb91'>
                     <Heading lineHeight={1.1} fontSize={{ base: '2xl', sm: '3xl' }}>
                         Create your page
                     </Heading>
@@ -247,10 +248,7 @@ export default function UserProfileEdit(): JSX.Element {
                             </FormLabel>
                             <InputGroup>
                                 <InputLeftAddon
-                                    bg="gray.50"
-                                    _dark={{
-                                        bg: "gray.800",
-                                    }}
+                                    bg="ffff00"
                                     color="gray.500"
                                     rounded="md"
                                 >
@@ -278,10 +276,7 @@ export default function UserProfileEdit(): JSX.Element {
                             </FormLabel>
                             <InputGroup>
                                 <InputLeftAddon
-                                    bg="gray.50"
-                                    _dark={{
-                                        bg: "gray.800",
-                                    }}
+                                    bg="ffff00"
                                     color="gray.500"
                                     rounded="md"
                                 >
@@ -299,17 +294,12 @@ export default function UserProfileEdit(): JSX.Element {
 
                     <SimpleGrid>
                         <FormControl id='githubUrl' as={GridItem} colSpan={[3, 2]} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('githubUrl', e)}>
-                            <FormLabel
-                                color="gray.700"
-                                _dark={{
-                                    color: "gray.50",
-                                }}
-                            >
+                            <FormLabel color="gray.700">                            
                                 GitHub URL
                             </FormLabel>
                             <InputGroup>
                                 <InputLeftAddon
-                                    bg="gray.50"
+                                    bg="ffff00"
                                     _dark={{
                                         bg: "gray.800",
                                     }}
@@ -330,7 +320,7 @@ export default function UserProfileEdit(): JSX.Element {
 
                     <Stack spacing={6} direction={['column', 'row']}>
                         <Button
-                            bg={'blue.400'}
+                            bg={'blue.800'}
                             color={'white'}
                             w="full"
                             _hover={{
@@ -342,6 +332,7 @@ export default function UserProfileEdit(): JSX.Element {
                     </Stack>
                 </Stack>
             </Flex>
-        </>
+            <Footer/>
+        </Box>
     );
 }
