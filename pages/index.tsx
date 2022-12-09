@@ -223,7 +223,7 @@ const Home: NextPage = () => {
                     />
                   }
                 >
-                  Create your profile for free, you don't need to pay any fees to create your profile. Even the NFT which will be minted to your address is free.
+                  Create your profile for free, you don&apos;t need to pay any fees to create your profile. Even the NFT which will be minted to your address is free.
                 </Feature>
 
                 <Feature
