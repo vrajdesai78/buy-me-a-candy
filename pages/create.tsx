@@ -15,18 +15,15 @@ import {
     GridItem,
     InputGroup,
     InputLeftAddon,
-    Icon,
-    Textarea,
-    chakra,
-    HStack
+    Textarea
 } from '@chakra-ui/react';
 import { SmallCloseIcon } from '@chakra-ui/icons';
 import React, { useState } from 'react';
 import { ThirdwebSDK } from "@thirdweb-dev/sdk/solana";
-import dynamic from "next/dynamic";
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Web3Storage } from 'web3.storage';
 import defaultImage from '../assets/Buy Me.png'
+import { NavBar } from '../components/NavBar';
 
 export default function UserProfileEdit(): JSX.Element {
 
@@ -38,18 +35,6 @@ export default function UserProfileEdit(): JSX.Element {
     const [linkedinUrl, setLinkedinUrl] = useState('')
     const [twitterUrl, setTwitterUrl] = useState('')
     const [githubUrl, setGithubUrl] = useState('')
-
-
-    // Default styles that can be overridden by your app
-    require("@solana/wallet-adapter-react-ui/styles.css");
-
-    const WalletMultiButtonDynamic = dynamic(
-        async () =>
-            (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
-        { ssr: false }
-    );
-
-    const bg = useColorModeValue("white", "gray.800");
 
     const handleInputChange = (name: string, e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
@@ -149,33 +134,13 @@ export default function UserProfileEdit(): JSX.Element {
 
     return (
         <>
-            <React.Fragment>
-                <chakra.header
-                    bg={bg}
-                    w="full"
-                    px={{ base: 2, sm: 4 }}
-                    py={4}
-                    shadow="md"
-                >
-                    <Flex alignItems="center" justifyContent="space-between" mx="auto">
-                        <Flex>
-                            <chakra.a
-                                href="/"
-                                title="Choc Home Page"
-                                display="flex"
-                                alignItems="center"
-                            >
-                            </chakra.a>
-                            <chakra.h1 fontSize="xl" fontWeight="medium" ml="2">
-                                Buy Me a Candy
-                            </chakra.h1>
-                        </Flex>
-                        <HStack display="flex" alignItems="center" spacing={1}>
-                            <WalletMultiButtonDynamic />
-                        </HStack>
-                    </Flex>
-                </chakra.header>
-            </React.Fragment>
+            <style jsx global>{`
+            html, body {
+                height: 100%;
+                width: 100%;
+            }
+        `}</style>
+            <NavBar/>
             <Flex
                 minH={'100vh'}
                 minW={'100vw'}

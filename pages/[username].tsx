@@ -1,14 +1,92 @@
 import { useRouter } from 'next/router'
-import React, { useState, useEffect } from "react";
-import { Box, Flex, Icon, Image, chakra } from "@chakra-ui/react";
-import { MdEmail, MdHeadset, MdLocationOn } from "react-icons/md";
-import { BsFillBriefcaseFill } from "react-icons/bs";
+import React, { useState, useEffect, FormEventHandler } from "react";
+import {
+    Heading,
+    Avatar,
+    Box,
+    Text,
+    Stack,
+    Button,
+    Link,
+    useColorModeValue,
+    Flex,
+    VStack,
+    HStack,
+    NumberInput,
+    NumberInputField,
+    NumberInputStepper,
+    NumberIncrementStepper,
+    NumberDecrementStepper,
+    Icon
+} from '@chakra-ui/react';
+import { MdEmail } from "react-icons/md";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk/solana";
+import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
+import { IconType } from 'react-icons';
+import * as Web3 from '@solana/web3.js';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { NavBar } from '../components/NavBar';
 
-const User = () => {
+export const getServerSideProps = async (context: any) => {
+
+    const username = context.query.username;
+    if (!process.env.PRIVATE_KEY) {
+        return {
+            notFound: true,
+        }
+    }
+    const sdk = ThirdwebSDK.fromPrivateKey("devnet", process.env.PRIVATE_KEY!);
+    const program = await sdk.getProgram("4mWbQ2wte2FbauiTQ3sNY681rxfNu8DZKWscrF7RJPEJ", "nft-collection");
+    const nfts = await program.getAll();
+    try {
+        const userNfts = nfts.find(nft => nft.metadata.name === username);
+        const userData = JSON.stringify(userNfts!.metadata!.properties);
+        var parsedData = JSON.parse(userData);
+        parsedData.push({ key: 'creatorsAddress', value: userNfts!.owner });
+    } catch (error) {
+        console.log(error);
+    }
+
+    return {
+        props: { parsedData: parsedData }
+    }
+}
+
+export const socialLinkComponent = (url: string, text: string, icon: IconType) => {
+    return (
+        <HStack spacing={2} >
+            <Box minW='xl' >
+                <Link href={url} isExternal
+                    _hover={{
+                        textDecoration: 'none',
+                    }}>
+                    <Button
+                        flex={1}
+                        fontSize={'sm'}
+                        rounded={'full'}
+                        _focus={{
+                            bg: 'gray.200',
+                        }}>
+                        <Icon as={icon} size={'2em'} />
+                        <Text
+                            fontSize={'md'}
+                            textAlign={'center'}
+                            color={useColorModeValue('gray.700', 'gray.400')}
+                            px={3}>
+                            {text}
+                        </Text>
+                    </Button>
+                </Link>
+            </Box>
+        </HStack>
+    )
+}
+
+
+const User = ({ parsedData }: { parsedData: Array<{ [key: string]: string }> }) => {
+
     const router = useRouter()
-    const { username } = router.query
-
+    const { username } = router.query;
     const [icon, setIcon] = useState('')
     const [name, setName] = useState('')
     const [bio, setBio] = useState('')
@@ -16,116 +94,140 @@ const User = () => {
     const [linkedinUrl, setLinkedinUrl] = useState('')
     const [twitterUrl, setTwitterUrl] = useState('')
     const [githubUrl, setGithubUrl] = useState('')
+    const [creatorsAddress, setCreatorsAddress] = useState('')
 
-    async function getUserDetails(username: string) {
-        const sdk = ThirdwebSDK.fromPrivateKey("devnet", "2my7j6TSnZZcRHCxW6ZDvgcjcEEBDShM4XLkbe6Di2bBemTUngPvnBVpKwpnG8LMCFA3DuARbz6MFM2Kpo3zZ2Hz");
-        const program = await sdk.getProgram("4mWbQ2wte2FbauiTQ3sNY681rxfNu8DZKWscrF7RJPEJ", "nft-collection");
-        const nfts = await program.getAll();
-        try {
-            const userNfts = nfts.find(nft => nft.metadata.name === username);
-            console.log(userNfts);
-            const userData = JSON.stringify(userNfts!.metadata!.properties);
-            const parsedData = JSON.parse(userData);
-            setIcon(parsedData[0].value);
-            setName(parsedData[1].value);
-            setBio(parsedData[3].value);
-            setEmail(parsedData[4].value);
-            setLinkedinUrl(parsedData[5].value);
-            setTwitterUrl(parsedData[6].value);
-            setGithubUrl(parsedData[7].value);
-        } catch (error) {
-            console.log(error);
-        }
+    useEffect(() => {
+        setIcon(parsedData[0].value);
+        setName(parsedData[1].value);
+        setBio(parsedData[3].value);
+        setEmail(parsedData[4].value);
+        setLinkedinUrl(parsedData[5].value);
+        setTwitterUrl(parsedData[6].value);
+        setGithubUrl(parsedData[7].value);
+        setCreatorsAddress(parsedData[8].value);
+    }, [parsedData])
+
+    const [txSig, setTxSig] = useState('');
+    const { connection } = useConnection();
+    const { publicKey, sendTransaction } = useWallet();
+
+    const link = () => {
+        return txSig ? `https://explorer.solana.com/tx/${txSig}?cluster=devnet` : ''
     }
 
-    // call function on page load 
-    useEffect(() => {
-        getUserDetails(username as string);
-    }, [username]);
+    const sendSol = async (event: React.ChangeEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        if (!connection || !publicKey) { return }
+        const transaction = new Web3.Transaction();
+        transaction.add(
+            Web3.SystemProgram.transfer({
+                fromPubkey: publicKey,
+                toPubkey: new Web3.PublicKey(creatorsAddress),
+                lamports: event.target.amount.value * Web3.LAMPORTS_PER_SOL
+            }),
+        );
+        const latestBlockhash = await connection.getLatestBlockhash();
+        transaction.lastValidBlockHeight = latestBlockhash.lastValidBlockHeight;
+        transaction.recentBlockhash = latestBlockhash.blockhash;
+        
+        sendTransaction(transaction, connection).then((sig) => {
+            setTxSig(sig)
+        });
+    }
 
     return (
-        <Flex
-            bg="#edf3f8"
-            _dark={{ bg: "#3e3e3e" }}
-            p={50}
-            w="full"
-            minW="100vw"
-            minH="100vh"
-            alignItems="center"
-            justifyContent="center"
-        >
-            <Box
-                w="xl"
-                mx="auto"
-                bg="white"
-                _dark={{ bg: "gray.800" }}
-                shadow="lg"
-                rounded="lg"
-                overflow="hidden"
+        <>
+            <NavBar />
+            <Flex
+                py={6}
+                minW={'100vw'}
+                maxH={'100vh'}
+                p={50}
+                w="full"
+                alignItems="center"
+                justifyContent="center"
             >
-                <Image
-                    w="full"
-                    h='md'
-                    fit="cover"
-                    objectPosition="center"
-                    src={icon}
-                    alt="avatar"
-                />
-
-                <Box py={4} px={6} bg={'blue.100'} >
-                    <chakra.h1
-                        fontSize="xl"
-                        fontWeight="bold"
-                        color="gray.800"
-                        _dark={{ color: "white" }}
-                    >
+                <style jsx global>{`
+            html, body {
+                height: 100%;
+                width: 100%;
+            }
+        `}</style>
+                <Box
+                    maxW={'sm'}
+                    w={'full'}
+                    bg={useColorModeValue('white', 'gray.900')}
+                    boxShadow={'2xl'}
+                    rounded={'lg'}
+                    p={6}
+                    textAlign={'center'}>
+                    <Avatar
+                        size={'xl'}
+                        src={icon}
+                        mb={4}
+                        pos={'relative'}
+                    />
+                    <Heading fontSize={'2xl'} fontFamily={'body'}>
                         {name}
-                    </chakra.h1>
-
-                    <chakra.p py={2} color="gray.700" _dark={{ color: "gray.400" }}>
+                    </Heading>
+                    <Text fontWeight={600} color={'gray.500'} mb={4}>
+                        @{username}
+                    </Text>
+                    <Text
+                        textAlign={'center'}
+                        color={useColorModeValue('gray.700', 'gray.400')}
+                        px={3}>
                         {bio}
-                    </chakra.p>
+                    </Text>
 
-                    <Flex
-                        alignItems="center"
-                        mt={4}
-                        color="gray.700"
-                        _dark={{ color: "gray.200" }}
-                    >
-                        <Icon as={BsFillBriefcaseFill} h={6} w={6} mr={2} />
+                    {/* {Show social media links of user} */}
 
-                        <chakra.h1 px={2} fontSize="sm">
-                            Choc UI
-                        </chakra.h1>
-                    </Flex>
-
-                    <Flex
-                        alignItems="center"
-                        mt={4}
-                        color="gray.700"
-                        _dark={{ color: "gray.200" }}
-                    >
-                        <Icon as={MdLocationOn} h={6} w={6} mr={2} />
-
-                        <chakra.h1 px={2} fontSize="sm">
-                            California
-                        </chakra.h1>
-                    </Flex>
-                    <Flex
-                        alignItems="center"
-                        mt={4}
-                        color="gray.700"
-                        _dark={{ color: "gray.200" }}
-                    >
-                        <Icon as={MdEmail} h={6} w={6} mr={2} />
-
-                        <chakra.h1 px={2} fontSize="sm">
-                            patterson@example.com
-                        </chakra.h1>
-                    </Flex>
+                    <VStack mt={8} direction={'row'} spacing={4}>
+                        {socialLinkComponent(`mailto:${email}`, email, MdEmail)}
+                        {socialLinkComponent(linkedinUrl, 'LinkedIn', FaLinkedin)}
+                        {socialLinkComponent(twitterUrl, 'Twitter', FaTwitter)}
+                        {socialLinkComponent(githubUrl, 'Github', FaGithub)}
+                    </VStack>
+                    <form onSubmit={sendSol}>
+                        <Stack mt={8} direction={'row'} spacing={4}>
+                            <NumberInput>
+                                <NumberInputField
+                                    placeholder='Enter Sol'
+                                    flex={2}
+                                    fontSize={'sm'}
+                                    rounded={'md'}
+                                    id='amount'
+                                    _focus={{
+                                        bg: 'gray.200',
+                                    }} />
+                                <NumberInputStepper>
+                                    <NumberIncrementStepper />
+                                    <NumberDecrementStepper />
+                                </NumberInputStepper>
+                            </NumberInput>
+                            <Button
+                                flex={1}
+                                fontSize={'sm'}
+                                rounded={'md'}
+                                bg={'blue.400'}
+                                color={'white'}
+                                type='submit'
+                                boxShadow={
+                                    '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
+                                }
+                                _hover={{
+                                    bg: 'blue.500',
+                                }}
+                                _focus={{
+                                    bg: 'blue.500',
+                                }}>
+                                Send Sol
+                            </Button>
+                        </Stack>
+                    </form>
                 </Box>
-            </Box>
-        </Flex>
+            </Flex >
+        </>
     )
 }
 
