@@ -133,6 +133,7 @@ export default function UserProfileEdit(): JSX.Element {
                 const mintAddress = await program.mintTo(publicKey.toBase58(), metadata);
                 router.push('/'+userName)
             } else {
+                alert("Please connect your wallet")
                 console.error("No public key found")
             }
         } else {
