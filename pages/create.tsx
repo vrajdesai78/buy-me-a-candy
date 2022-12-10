@@ -23,6 +23,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { Web3Storage } from 'web3.storage';
 import { NavBar } from '../components/NavBar';
 import { Footer } from '../components/Footer';
+import { useRouter } from 'next/router';
 
 export default function UserProfileEdit(): JSX.Element {
 
@@ -34,6 +35,8 @@ export default function UserProfileEdit(): JSX.Element {
     const [linkedinUrl, setLinkedinUrl] = useState('')
     const [twitterUrl, setTwitterUrl] = useState('')
     const [githubUrl, setGithubUrl] = useState('')
+
+    const router = useRouter()
 
     const handleInputChange = (name: string, e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
@@ -128,7 +131,7 @@ export default function UserProfileEdit(): JSX.Element {
             }
             if (publicKey != null) {
                 const mintAddress = await program.mintTo(publicKey.toBase58(), metadata);
-                alert("Successfully minted NFT to your wallet. Mint address: " + mintAddress)
+                router.push('/'+userName)
             } else {
                 console.error("No public key found")
             }
