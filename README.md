@@ -8,7 +8,7 @@ Create a profile by entering your name, description, and profile picture. You ca
 
 ## How to view your profile?
 
-While creating your profile, you have entered username so you can access the profile by visiting `https://buy-me-a-candy.vercel.app/username`. For example, if your username is `vraj` then you can access your profile by visiting `https://buy-me-a-candy.vercel.app/vraj`. You can also access site by entering your wallet address or SNS (Solana Name Service). 
+While creating your profile, you have entered username so you can access the profile by visiting `https://buy-me-a-candy.vercel.app/username`. For example, if your username is `vraj` then you can access your profile by visiting `https://buy-me-a-candy.vercel.app/vraj`. 
 
 # Setup Instructions
 
