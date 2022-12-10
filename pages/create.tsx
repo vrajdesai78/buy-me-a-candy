@@ -7,22 +7,20 @@ import {
     Input,
     Stack,
     Avatar,
-    AvatarBadge,
-    IconButton,
     Center,
     SimpleGrid,
     GridItem,
     InputGroup,
     InputLeftAddon,
     Textarea,
-    Box
+    Box, 
+    Alert,
+    AlertIcon
 } from '@chakra-ui/react';
-import { SmallCloseIcon } from '@chakra-ui/icons';
 import React, { useState } from 'react';
 import { ThirdwebSDK } from "@thirdweb-dev/sdk/solana";
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Web3Storage } from 'web3.storage';
-import defaultImage from '../assets/Buy Me.png'
 import { NavBar } from '../components/NavBar';
 import { Footer } from '../components/Footer';
 
@@ -83,13 +81,19 @@ export default function UserProfileEdit(): JSX.Element {
 
     async function mintNFT(): Promise<any> {
 
+        if (userName == '' || name == '' || email == '') {            
+            alert("Please fill in all required fields")
+            return
+        }
+
         if (process.env.PRIVATE_KEY != null) {
             const sdk = ThirdwebSDK.fromPrivateKey("devnet", process.env.PRIVATE_KEY);
             const program = await sdk.getProgram("4mWbQ2wte2FbauiTQ3sNY681rxfNu8DZKWscrF7RJPEJ", "nft-collection");
+            
             const metadata = {
                 name: userName,
                 symbol: "CANDY",
-                Image: icon,
+                Image: 'https://bafybeiavgggc64ebnpayng3jmkhdwpgvuka2xus3dh5hnjmmls2ncblg3e.ipfs.w3s.link/Buy%20Me.png',
                 description: "NFT used to create profile in buy me a candy",
                 properties: [
                     {
@@ -126,10 +130,10 @@ export default function UserProfileEdit(): JSX.Element {
                 const mintAddress = await program.mintTo(publicKey.toBase58(), metadata);
                 alert("Successfully minted NFT to your wallet. Mint address: " + mintAddress)
             } else {
-                return console.error("Wallet not connected");
+                console.error("No public key found")
             }
         } else {
-            return console.error("No private key found");
+            console.error("No private key found")
         }
     }
 
@@ -138,7 +142,8 @@ export default function UserProfileEdit(): JSX.Element {
             <style jsx global>{`
             html, body {
                 height: 100%;
-                width: 100%;
+                max-width: 100%;
+                overflow-x: hidden;
             }
         `}</style>
             <NavBar />
@@ -156,6 +161,7 @@ export default function UserProfileEdit(): JSX.Element {
                     border={'1px'}
                     p={6}
                     my={12}
+                    m={4}
                     bg='#dae3fb91'>
                     <Heading lineHeight={1.1} fontSize={{ base: '2xl', sm: '3xl' }}>
                         Create your page
@@ -165,20 +171,14 @@ export default function UserProfileEdit(): JSX.Element {
                             <FormLabel>User Icon</FormLabel>
                             <Stack direction={['column', 'row']} spacing={6}>
                                 <Center>
-                                    <Avatar size="xl" src={icon}>
-                                        <AvatarBadge
-                                            as={IconButton}
-                                            size="sm"
-                                            rounded="full"
-                                            top="-10px"
-                                            colorScheme="red"
-                                            aria-label="remove Image"
-                                            icon={<SmallCloseIcon />}
-                                        />
+                                    <Avatar size="xl" src={icon} border={'1px'} color={'gray.800'} >
                                     </Avatar>
                                 </Center>
                                 <Center w="full">
                                     <Input
+                                        borderColor={'gray.800'}
+                                        _hover={{ borderColor: 'blue.800', border: '2px' }}
+                                        p={1}
                                         colorScheme="blue"
                                         variant="outline"
                                         w="full"
@@ -195,7 +195,9 @@ export default function UserProfileEdit(): JSX.Element {
                     <FormControl id="userName" isRequired onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('userName', e)}>
                         <FormLabel>User Name</FormLabel>
                         <Input
+                            _hover={{ borderColor: 'blue.800', border: '2px' }}
                             placeholder="User Name"
+                            borderColor={'gray.800'}
                             _placeholder={{ color: 'gray.500' }}
                             type="text"
                         />
@@ -204,7 +206,9 @@ export default function UserProfileEdit(): JSX.Element {
                     <FormControl id="name" isRequired onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('name', e)}>
                         <FormLabel>Name</FormLabel>
                         <Input
+                            _hover={{ borderColor: 'blue.800', border: '2px' }}
                             placeholder="Name"
+                            borderColor={'gray.800'}
                             _placeholder={{ color: 'gray.500' }}
                             type="text"
                         />
@@ -220,17 +224,19 @@ export default function UserProfileEdit(): JSX.Element {
                             Bio
                         </FormLabel>
                         <Textarea
-                            placeholder="you@example.com"
+                            placeholder="Write your bio"
+                            borderColor={'gray.800'}
                             mt={1}
                             rows={3}
                             shadow="sm"
-                            focusBorderColor="brand.400"
                         />
                     </FormControl>
                     <FormControl id="userEmail" isRequired onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('email', e)}>
                         <FormLabel>Email address</FormLabel>
                         <Input
+                            _hover={{ borderColor: 'blue.800', border: '2px' }}
                             placeholder="your-email@example.com"
+                            borderColor={'gray.800'}
                             _placeholder={{ color: 'gray.500' }}
                             type="email"
                         />
@@ -246,9 +252,9 @@ export default function UserProfileEdit(): JSX.Element {
                             >
                                 Linkedin URL
                             </FormLabel>
-                            <InputGroup>
+                            <InputGroup borderColor={'gray.800'} >
                                 <InputLeftAddon
-                                    bg="ffff00"
+                                    bg="gray.100"
                                     color="gray.500"
                                     rounded="md"
                                 >
@@ -274,9 +280,9 @@ export default function UserProfileEdit(): JSX.Element {
                             >
                                 Twitter URL
                             </FormLabel>
-                            <InputGroup>
+                            <InputGroup borderColor={'gray.800'} >
                                 <InputLeftAddon
-                                    bg="ffff00"
+                                    bg="gray.100"
                                     color="gray.500"
                                     rounded="md"
                                 >
@@ -294,15 +300,12 @@ export default function UserProfileEdit(): JSX.Element {
 
                     <SimpleGrid>
                         <FormControl id='githubUrl' as={GridItem} colSpan={[3, 2]} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('githubUrl', e)}>
-                            <FormLabel color="gray.700">                            
+                            <FormLabel color="gray.700">
                                 GitHub URL
                             </FormLabel>
-                            <InputGroup>
+                            <InputGroup borderColor={'gray.800'} >
                                 <InputLeftAddon
-                                    bg="ffff00"
-                                    _dark={{
-                                        bg: "gray.800",
-                                    }}
+                                    bg="gray.100"
                                     color="gray.500"
                                     rounded="md"
                                 >
@@ -323,16 +326,17 @@ export default function UserProfileEdit(): JSX.Element {
                             bg={'blue.800'}
                             color={'white'}
                             w="full"
+                            type='submit'
+                            onClick={mintNFT}
                             _hover={{
                                 bg: 'blue.500',
-                            }}
-                            onClick={mintNFT}>
+                            }}>
                             Create Profile
                         </Button>
                     </Stack>
                 </Stack>
             </Flex>
-            <Footer/>
+            <Footer />
         </Box>
     );
 }

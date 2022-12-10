@@ -1,10 +1,12 @@
 import {
     chakra,
     Flex,
-    HStack
+    HStack,
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
+import Image from 'next/image';
 import React from "react";
+import logo from '../assets/logo.png';
 
 export const NavBar = () => {
 
@@ -21,15 +23,13 @@ export const NavBar = () => {
             <chakra.header
                 bg={'transparent'}
                 w="full"
-                px={{ base: 2, sm: 4 }}
+                px={{ base: 4, sm: 6 }}
                 py={4}
             >
                 <Flex alignItems="center" justifyContent="space-between" mx="auto">
                     <Flex>
-                        <chakra.h1 fontSize="xl" fontWeight="medium" ml="2">
-                        </chakra.h1>
                     </Flex>
-                    <HStack display="flex" alignItems="center" spacing={1}>
+                    <HStack display="flex" alignItems="center" spacing={1} >
                         <WalletMultiButtonDynamic style={{ 'background':'#260367' }} />
                     </HStack>
                 </Flex>

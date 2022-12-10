@@ -44,7 +44,7 @@ export const getServerSideProps = async (context: any) => {
         var parsedData = JSON.parse(userData);
         parsedData.push({ key: 'creatorsAddress', value: userNfts!.owner });
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 
     return {
@@ -98,14 +98,18 @@ const User = ({ parsedData }: { parsedData: Array<{ [key: string]: string }> }) 
     const [creatorsAddress, setCreatorsAddress] = useState('')
 
     useEffect(() => {
-        setIcon(parsedData[0].value);
-        setName(parsedData[1].value);
-        setBio(parsedData[3].value);
-        setEmail(parsedData[4].value);
-        setLinkedinUrl(parsedData[5].value);
-        setTwitterUrl(parsedData[6].value);
-        setGithubUrl(parsedData[7].value);
-        setCreatorsAddress(parsedData[8].value);
+        try {
+            setIcon(parsedData[0].value);
+            setName(parsedData[1].value);
+            setBio(parsedData[3].value);
+            setEmail(parsedData[4].value);
+            setLinkedinUrl(parsedData[5].value);
+            setTwitterUrl(parsedData[6].value);
+            setGithubUrl(parsedData[7].value);
+            setCreatorsAddress(parsedData[8].value);
+        } catch (error) {
+            console.error(error)
+        }
     }, [parsedData])
 
     const [txSig, setTxSig] = useState('');
@@ -118,7 +122,7 @@ const User = ({ parsedData }: { parsedData: Array<{ [key: string]: string }> }) 
 
     const sendSol = async (event: React.ChangeEvent<HTMLFormElement>) => {
         event.preventDefault()
-        if (!connection || !publicKey) { return }
+        if (!connection || !publicKey || !creatorsAddress ) { return }
         const transaction = new Web3.Transaction();
         transaction.add(
             Web3.SystemProgram.transfer({
@@ -137,11 +141,11 @@ const User = ({ parsedData }: { parsedData: Array<{ [key: string]: string }> }) 
     }
 
     return (
-        <Box bgGradient={'linear(blue.300 0%, purple.300 35%, green.100 100%)'}>
+        <Box bgGradient={'linear(blue.300 0%, purple.300 35%, green.100 100%)'} >
             <style jsx global>{`
                 html, body {
                     height: 100%;
-                    width: 100%;
+                    width: 100%;                
                 }
             `}</style>
             <NavBar />
@@ -158,13 +162,14 @@ const User = ({ parsedData }: { parsedData: Array<{ [key: string]: string }> }) 
                 <Box
                     maxW={'sm'}
                     w={'full'}
-                    border = '1px'
-                    bgGradient={'linear(blue.300 0%, purple.300 35%, green.100 100%)'}
+                    border='1px'
+                    bgGradient={'linear(blue.200 0%, purple.200 35%, green.100 100%)'}
                     boxShadow={'2xl'}
                     rounded={'lg'}
                     p={6}
                     textAlign={'center'}>
                     <Avatar
+                        border={'2px'}
                         size={'2xl'}
                         src={icon}
                         mb={4}
@@ -232,7 +237,7 @@ const User = ({ parsedData }: { parsedData: Array<{ [key: string]: string }> }) 
                     </form>
                 </Box>
             </Flex >
-            <Footer/>
+            <Footer />
         </Box>
     )
 }

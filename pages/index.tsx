@@ -60,7 +60,7 @@ const Home: NextPage = () => {
           >
             {props.title}
           </chakra.dt>
-          <chakra.dd mt={2} color="gray.300" _dark={{ color: "gray.400" }}>
+          <chakra.dd mt={2} color="gray.300" >
             {props.children}
           </chakra.dd>
         </Box>
