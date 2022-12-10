@@ -13,7 +13,7 @@ While creating your profile, you have entered username so you can access the pro
 # Setup Instructions
 
 ## Prerequisites
-Install Node.js and npm. You can download Node.js from [here](https://nodejs.org/en/download/).
+Install Node.js and npm. You can download Node.js from [here](https://nodejs.org/en/download/). User also need to download phantom wallet create their profile and recieve funds in SOL
 
 ## Installation
 Clone the repository and install the dependencies.
