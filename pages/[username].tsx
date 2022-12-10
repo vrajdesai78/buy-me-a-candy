@@ -98,15 +98,16 @@ const User = ({ parsedData }: { parsedData: Array<{ [key: string]: string }> }) 
     const [creatorsAddress, setCreatorsAddress] = useState('')
 
     useEffect(() => {
+        console.log(parsedData)
         try {
             setIcon(parsedData[0].value);
             setName(parsedData[1].value);
-            setBio(parsedData[3].value);
-            setEmail(parsedData[4].value);
-            setLinkedinUrl(parsedData[5].value);
-            setTwitterUrl(parsedData[6].value);
-            setGithubUrl(parsedData[7].value);
-            setCreatorsAddress(parsedData[8].value);
+            setBio(parsedData[2].value);
+            setEmail(parsedData[3].value);
+            setLinkedinUrl(parsedData[4].value);
+            setTwitterUrl(parsedData[5].value);
+            setGithubUrl(parsedData[6].value);
+            setCreatorsAddress(parsedData[7].value);
         } catch (error) {
             console.error(error)
         }
