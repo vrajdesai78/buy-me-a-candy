@@ -147,12 +147,14 @@ const User = ({ parsedData }: { parsedData: Array<{ [key: string]: string }> }) 
     }
 
     return (
-        <Box bgGradient={'linear(blue.300 0%, purple.300 35%, green.100 100%)'} >
+        <Box bgGradient={'linear(blue.300 0%, purple.300 35%, green.100 100%)'} style={{ margin:0, padding:0, height:'100vh', width:'100vw', overflow: 'hidden'}}  >
             <style jsx global>{`
                 html, body {
                     height: 100%;
                     width: 100%; 
-                    overflow-x: hidden;      
+                    overflow-x: hidden;
+                    margin: 0;
+                    padding: 0;
                 }
             `}</style>
             <NavBar />
@@ -163,9 +165,7 @@ const User = ({ parsedData }: { parsedData: Array<{ [key: string]: string }> }) 
                 p={30}
                 w="full"
                 alignItems="center"
-                justifyContent="center"
-            >
-
+                justifyContent="center">
                 <Box
                     maxW={'sm'}
                     w={'full'}
@@ -205,14 +205,15 @@ const User = ({ parsedData }: { parsedData: Array<{ [key: string]: string }> }) 
                         {socialLinkComponent(githubUrl, 'Github', FaGithub)}
                     </VStack>
                     <form onSubmit={sendSol}>
-                        <Stack mt={8} direction={'row'} spacing={4}>
-                            <NumberInput>
+                        <Stack mt={8} direction={'row'} spacing={2}>
+                            <NumberInput width={'100%'} >
                                 <NumberInputField
                                     placeholder='Enter Sol'
                                     flex={2}
                                     bg={'gray.100'}
                                     fontSize={'sm'}
                                     rounded={'md'}
+                                    width={'full'}
                                     id='amount'
                                     _focus={{
                                         bg: 'gray.100',
@@ -227,6 +228,8 @@ const User = ({ parsedData }: { parsedData: Array<{ [key: string]: string }> }) 
                                 fontSize={'sm'}
                                 rounded={'md'}
                                 bg={'blue.700'}
+                                size={'2xl'}
+                                p={2}
                                 color={'white'}
                                 type='submit'
                                 boxShadow={
