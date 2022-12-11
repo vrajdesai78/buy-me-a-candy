@@ -35,11 +35,16 @@ export const getServerSideProps = async (context: any) => {
             notFound: true,
         }
     }
-    const sdk = ThirdwebSDK.fromPrivateKey("devnet", process.env.PRIVATE_KEY!);
-    const program = await sdk.getProgram("4mWbQ2wte2FbauiTQ3sNY681rxfNu8DZKWscrF7RJPEJ", "nft-collection");
-    const nfts = await program.getAll();
     try {
+        const sdk = ThirdwebSDK.fromPrivateKey("devnet", process.env.PRIVATE_KEY!);
+        const program = await sdk.getProgram("4mWbQ2wte2FbauiTQ3sNY681rxfNu8DZKWscrF7RJPEJ", "nft-collection");
+        const nfts = await program.getAll();
         const userNfts = nfts.find(nft => nft.metadata.name === username);
+        if(!userNfts) {
+            return {
+                notFound: true,
+            }
+        }
         const userData = JSON.stringify(userNfts!.metadata!.properties);
         var parsedData = JSON.parse(userData);
         parsedData.push({ key: 'creatorsAddress', value: userNfts!.owner });
@@ -123,7 +128,7 @@ const User = ({ parsedData }: { parsedData: Array<{ [key: string]: string }> }) 
 
     const sendSol = async (event: React.ChangeEvent<HTMLFormElement>) => {
         event.preventDefault()
-        if (!connection || !publicKey || !creatorsAddress ) { return }
+        if (!connection || !publicKey || !creatorsAddress) { return }
         const transaction = new Web3.Transaction();
         transaction.add(
             Web3.SystemProgram.transfer({
@@ -146,7 +151,8 @@ const User = ({ parsedData }: { parsedData: Array<{ [key: string]: string }> }) 
             <style jsx global>{`
                 html, body {
                     height: 100%;
-                    width: 100%;                
+                    width: 100%; 
+                    overflow-x: hidden;      
                 }
             `}</style>
             <NavBar />
