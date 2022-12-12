@@ -10,6 +10,9 @@ Create a profile by entering your name, description, and profile picture. You ca
 
 While creating your profile, you have entered username so you can access the profile by visiting `https://buy-me-a-candy.vercel.app/username`. For example, if your username is `vraj` then you can access your profile by visiting `https://buy-me-a-candy.vercel.app/vraj`. 
 
+![image](https://user-images.githubusercontent.com/43074241/207101643-61b30899-38c4-4494-8d42-8dda53340492.png)
+
+
 # Setup Instructions
 
 ## Prerequisites
@@ -28,4 +31,4 @@ Install the dependencies.
 ## Running the app
      
     npm run dev or yarn dev
-
+  
