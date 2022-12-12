@@ -7,7 +7,7 @@ Anyone can create their micro page of their profile on Buy Me A Candy. It's a si
 
 ## How to create your profile?
 
-Create a profile by entering your name, description, and profile picture. You can also add your social media links. After creating your profile, NFT will be minted on your connected wallet. You can view your NFT on your wallet. 
+Create a profile by entering your name, description, and profile picture by visiting `https://buy-me-a-candy.vercel.app/create`. You can also add your social media links. After creating your profile, NFT will be minted on your connected wallet. You can view your NFT on your wallet. 
 
 ![image](https://user-images.githubusercontent.com/43074241/207102031-108ace93-872d-4123-b162-28e1f73088c5.png)
 
