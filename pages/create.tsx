@@ -96,7 +96,7 @@ export default function UserProfileEdit(): JSX.Element {
             const metadata = {
                 name: userName,
                 symbol: "CANDY",
-                Image: 'https://bafybeiavgggc64ebnpayng3jmkhdwpgvuka2xus3dh5hnjmmls2ncblg3e.ipfs.w3s.link/Buy%20Me.png',
+                image: 'https://bafybeiee7qg2rte7wlch47akx3zj2toj5wvbetiska3bqb2r2yjgjc3yky.ipfs.w3s.link/Buy%20Me.gif',
                 description: "NFT used to create profile in buy me a candy",
                 properties: [
                     {
